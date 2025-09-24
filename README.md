@@ -28,17 +28,6 @@
 
 기타: joblib
 
-프로젝트 구조
-TextGenreClassifier/
-├─ app.py              # Flask 웹 애플리케이션
-├─ preprocess_data.py  # 데이터 전처리 스크립트
-├─ train_model.py      # 모델 학습 스크립트
-├─ templates/
-│  └─ index.html       # 웹 UI 템플릿
-├─ data_by_genre/      # 크롤링된 원본 텍스트 데이터
-├─ genre_classifier_model.pkl   # 학습된 모델 파일
-├─ tfidf_vectorizer.pkl         # 학습된 벡터라이저 파일
-└─ text/               # 예측할 파일을 넣는 폴더
 
 시작하기 (Getting Started)
 프로젝트를 로컬 환경에서 실행하려면 아래 단계를 따라주세요.
