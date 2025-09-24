@@ -1,0 +1,8 @@
+# 웹 크롤링 및 데이터 수집
+requests
+beautifulsoup4
+
+# 텍스트 전처리 및 모델링
+nltk
+scikit-learn
+pandas

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>장르 예측기</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: #f4f4f4; }
+        .container { 
+            width: 600px; 
+            margin: auto; 
+            padding: 30px; 
+            border: 1px solid #ddd; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background-color: #fff;
+        }
+        h1 { color: #333; }
+        p { color: #666; }
+        input[type="file"], button { margin: 10px 0; padding: 10px 15px; border-radius: 5px; border: 1px solid #ccc; }
+        button { background-color: #007bff; color: white; cursor: pointer; border: none; }
+        button:hover { background-color: #0056b3; }
+        #result { margin-top: 25px; font-size: 1.3em; font-weight: bold; color: #333; }
+        #wordcloud-container { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
+        #wordcloud-img { max-width: 100%; height: auto; border: 1px solid #eee; }
+        #loading { margin-top: 20px; color: #007bff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>텍스트 파일 장르 예측기</h1>
+        <p>장르를 예측하고 싶은 텍스트 파일(.txt)을 업로드하세요.</p>
+        
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" name="file" id="fileInput" accept=".txt">
+            <button type="submit">예측하기</button>
+        </form>
+
+        <div id="loading" style="display:none;">예측 중...</div>
+        <div id="result"></div>
+
+        <div id="wordcloud-container">
+            <h3>워드 클라우드</h3>
+            <img id="wordcloud-img" src="" alt="워드 클라우드" style="display:none;">
+        </div>
+
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const form = e.target;
+            const formData = new FormData(form);
+            const resultDiv = document.getElementById('result');
+            const loadingDiv = document.getElementById('loading');
+            const wordcloudImg = document.getElementById('wordcloud-img');
+
+            resultDiv.textContent = '';
+            wordcloudImg.style.display = 'none'; // 이전 워드클라우드 숨김
+            wordcloudImg.src = '';
+            loadingDiv.style.display = 'block';
+
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadingDiv.style.display = 'none';
+                if (data.genre) {
+                    resultDiv.textContent = '예측된 장르: ' + data.genre;
+                    if (data.wordcloud) {
+                        wordcloudImg.src = 'data:image/png;base64,' + data.wordcloud;
+                        wordcloudImg.style.display = 'block';
+                    } else {
+                        resultDiv.textContent += ' (워드 클라우드 생성 실패)';
+                    }
+                } else if (data.error) {
+                    resultDiv.textContent = '오류: ' + data.error;
+                }
+            })
+            .catch(error => {
+                loadingDiv.style.display = 'none';
+                resultDiv.textContent = '요청 실패: ' + error;
+            });
+        });
+    </script>
+</body>
+</html>
